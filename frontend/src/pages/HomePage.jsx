@@ -4,22 +4,26 @@ import noemail from '../assets/noemail.png';
 
 const HomePage = () => {
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState(null);
+  const [emailData, setEmailData] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
-  // mock OTP data
-  const mockOtpDB = {
-    'zerryboy28@gmail.com': '658321',
-    'user2@netflix.com': '942017',
-  };
-
-  const handleSearch = () => {
-    if (mockOtpDB[email.trim().toLowerCase()]) {
-      setOtp(mockOtpDB[email.trim().toLowerCase()]);
+  const handleSearch = async () => {
+    try {
+      const res = await fetch('http://localhost:5120/api/get-email');
+      const data = await res.json();
+      if (!data || !data.html) {
+        setNotFound(true);
+        setShowPopup(false);
+        return;
+      }
+      setEmailData(data);
+      setShowPopup(true);
       setNotFound(false);
-    } else {
-      setOtp(null);
+    } catch (err) {
+      console.error('เกิดข้อผิดพลาดในการดึงอีเมล:', err);
       setNotFound(true);
+      setShowPopup(false);
     }
   };
 
@@ -49,15 +53,6 @@ const HomePage = () => {
         <small>**ลิงค์ มีอายุ 15 นาที ^_^</small>
 
         <div className="mt-10 flex flex-col items-center">
-          {otp && (
-            <>
-              <p className="text-lg">OTP ของคุณคือ:</p>
-              <div className="text-2xl font-bold bg-gray-800 px-6 py-2 rounded-lg mt-2">
-                {otp}
-              </div>
-            </>
-          )}
-
           {notFound && (
             <>
               <img src={noemail} alt="No Email" className="w-20 h-auto" />
@@ -70,6 +65,34 @@ const HomePage = () => {
       <footer className="mt-auto py-4">
         <small>©Tomoru Official 2024</small>
       </footer>
+
+      {showPopup && emailData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-['Prompt']">
+          <div className="bg-white rounded-xl w-[95%] max-w-3xl p-4 relative text-black max-h-[90vh] overflow-auto">
+            <h2 className="text-xl font-bold mb-4">อีเมลล่าสุดจาก Netflix</h2>
+            <p><strong>From:</strong> {emailData.from}</p>
+            <p><strong>Subject:</strong> {emailData.subject}</p>
+
+            <div
+              className="mt-4 prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: emailData.html }}
+            />
+
+            <button
+              onClick={() => setShowPopup(false)}
+              className="bg-red-600 text-white w-full py-2 rounded-lg mt-6"
+            >
+              ปิด
+            </button>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="absolute top-2 right-4 text-gray-600 text-xl font-bold"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
