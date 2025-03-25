@@ -68,8 +68,7 @@ const HomePage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-['Prompt'] px-2">
           <div className="bg-white rounded-xl w-full max-w-3xl p-6 relative text-black max-h-[90vh] overflow-auto shadow-xl">
             <h2 className="text-xl font-bold text-pink-700 mb-3">อีเมลล่าสุดจาก Netflix</h2>
-            <p className="mb-1"><strong>From:</strong> {emailData.from}</p>
-            <p className="mb-4"><strong>Subject:</strong> {emailData.subject}</p>
+
 
             <div
               className="prose max-w-none"
