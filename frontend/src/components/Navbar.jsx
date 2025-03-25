@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logo from '../assets/logo1.png';
-import howtoImage from '../assets/howto.jpg';
+import howtoImage from '../assets/how2.jpg';
 
 const Navbar = () => {
   const [showModal, setShowModal] = useState(false);
